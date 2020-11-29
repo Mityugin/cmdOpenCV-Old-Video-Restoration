@@ -52,14 +52,15 @@ static float hull_pts[] = {
 int main()
 {
 
-    string input_path = "C:\\TEMP\\Czar-part1.mp4";
-    string output_path = "C:\\TEMP\\Czar-part1-super.mp4";
+    string input_path = "C:\\TEMP\\Czar-part2.mp4";
+    string output_path = "C:\\TEMP\\Czar-part2-super2.mp4";
 
-    string algorithm = "espcn";
+    string algorithm = "fsrcnn";
+    //string algorithm = "espcn";
     int scale = 2;
 
-    //string path = "C:\\TEMP\\Models\\FSRCNN_x2.pb";
-    string path = "C:\\TEMP\\Models\\ESPCN_x2.pb";
+    string path = "C:\\TEMP\\Models\\FSRCNN_x2.pb";
+    //string path = "C:\\TEMP\\Models\\ESPCN_x2.pb";
 
     VideoCapture input_video(input_path);
     int ex = static_cast<int>(input_video.get(CAP_PROP_FOURCC));
@@ -77,11 +78,10 @@ int main()
 	const int W_in = 224;
 	const int H_in = 224;
 
-
 	// Read the network into Memory
 
 	auto net = readNetFromCaffe(protoFile, weightsFile);
-
+    
 	net.setPreferableBackend(DNN_BACKEND_CUDA);
 	net.setPreferableTarget(DNN_TARGET_CUDA_FP16);
 
@@ -110,6 +110,13 @@ int main()
             break;
 
         sr.upsample(frame, output_frame);
+
+        /*cvtColor(output_frame, grayimg, COLOR_BGR2GRAY);
+        cv::Ptr<CLAHE> clahe = createCLAHE();
+        clahe->setClipLimit(4);
+        Mat dst;
+        clahe->apply(grayimg, dst);
+        cvtColor(dst, output_frame, COLOR_GRAY2BGR);*/
 
        // populate cluster centers as 1x1 convolution kernel
 		int sz[] = { 2, 313, 1, 1 };
@@ -144,15 +151,13 @@ int main()
         merge(chn, 3, lab);
         cvtColor(lab, color, COLOR_Lab2BGR);
 
-        // Results show --bug opencv4.0.0 can only display CV_8UC(*) image, need to convert after imshow
-        color.convertTo(color, CV_8U, 255.);
-        //imshow("color", color);
 
-        Mat(L + 50).convertTo(L, CV_8U);
-        //imshow("L", L);
-
-        //frame.convertTo(frame, CV_8U, 255.);
-        //imshow("original", img);
+		//cvtColor(color, output_frame, COLOR_BGR2GRAY);
+		//cv::Ptr<CLAHE> clahe = createCLAHE();
+		//clahe->setClipLimit(4);
+		//Mat dst;
+		//clahe->apply(output_frame, dst);
+		//cvtColor(dst, color, COLOR_GRAY2BGR);
 
         output_video << color;
  
