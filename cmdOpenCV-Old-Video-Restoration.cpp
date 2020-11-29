@@ -94,7 +94,7 @@ int main()
 
     for (;;)
     {
-        Mat frame, output_frame;
+        Mat frame, output_frame, greyimg;
         
         input_video >> frame;
 
@@ -102,13 +102,6 @@ int main()
             break;
 
         sr.upsample(frame, output_frame);
-
-        /*cvtColor(output_frame, grayimg, COLOR_BGR2GRAY);
-        cv::Ptr<CLAHE> clahe = createCLAHE();
-        clahe->setClipLimit(4);
-        Mat dst;
-        clahe->apply(grayimg, dst);
-        cvtColor(dst, output_frame, COLOR_GRAY2BGR);*/
 
        // populate cluster centers as 1x1 convolution kernel
 		int sz[] = { 2, 313, 1, 1 };
@@ -142,14 +135,6 @@ int main()
         Mat color, chn[] = { L, a, b };
         merge(chn, 3, lab);
         cvtColor(lab, color, COLOR_Lab2BGR);
-
-
-		//cvtColor(color, output_frame, COLOR_BGR2GRAY);
-		//cv::Ptr<CLAHE> clahe = createCLAHE();
-		//clahe->setClipLimit(4);
-		//Mat dst;
-		//clahe->apply(output_frame, dst);
-		//cvtColor(dst, color, COLOR_GRAY2BGR);
 
         output_video << color;
  
